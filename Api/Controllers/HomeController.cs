@@ -70,7 +70,7 @@ namespace Api.Controllers
 
         // POST api/<HomeController>
         /// <summary>
-        /// [Authorize]
+        [Authorize]
         /// </summary>
         /// <param name="value"></param>
         [HttpPost]
