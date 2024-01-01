@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Api.Models
+namespace DBContext.Models
 {
     public partial class CompaniesDataContext : DbContext
     {

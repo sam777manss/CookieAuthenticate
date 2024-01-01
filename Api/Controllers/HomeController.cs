@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
@@ -23,36 +25,51 @@ namespace Api.Controllers
 
         // GET: api/<HomeController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<string>> Get()
         {
+            //A claim is a statement about a subject by an issuer and
+            //represent attributes of the subject that are useful in the context of authentication and authorization operations.
+            var claims = new List<Claim>() {
+                    new Claim(ClaimTypes.NameIdentifier,Convert.ToString(1)),
+                    new Claim(ClaimTypes.Name,"Sameer"),
+                    new Claim(ClaimTypes.Role,"Admin"),
+                    new Claim("FavoriteDrink","Tea")
+                    };
+            //Initialize a new instance of the ClaimsIdentity with the claims and authentication scheme
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            //Initialize a new instance of the ClaimsPrincipal with ClaimsIdentity
+            var principal = new ClaimsPrincipal(identity);
+            //SignInAsync is a Extension method for Sign in a principal for the specified scheme.
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                principal, new AuthenticationProperties() { IsPersistent = true });
+
             return new string[] { "value1", "value2" };
         }
 
         // GET api/<HomeController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<string> Get(int id)
         {
-            var token = GenerateToken();
+            //SignOutAsync is Extension method for SignOut
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            //var token = GenerateToken();
 
             // set cookie
-            CookieOptions cookie = new CookieOptions();
-            cookie.Expires = DateTime.Now.AddHours(1);
-            //Response.Cookies.Append("Token", token);
-            // read cookie 
-           // string tokenagain = Request.Cookies["Token"];
+            //CookieOptions cookie = new CookieOptions();
 
-            var claims = GetClaimsFromToken(token);
-            var emailClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            Response.Cookies.Append("APIEmail", emailClaim, cookie);
-            string cookieValueFromReq = Request.Cookies["APIEmail"];
+            //var claims = GetClaimsFromToken(token);
+            //var emailClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            //Response.Cookies.Append("APIEmail", emailClaim, cookie);
+            //string cookieValueFromReq = Request.Cookies["APIEmail"];
 
-            var user = HttpContext.User;
-            var roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+            //var user = HttpContext.User;
+            //var roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
 
             return "value";
         }
 
         // POST api/<HomeController>
+        [Authorize]
         [HttpPost]
         public void Post([FromBody] string value)
         {
@@ -65,7 +82,7 @@ namespace Api.Controllers
         }
 
         // DELETE api/<HomeController>/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "User")]
 
         [HttpDelete("{id}")]
         public void Delete(int id)

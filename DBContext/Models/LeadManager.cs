@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Api.Models
+namespace DBContext.Models
 {
     public partial class LeadManager
     {
