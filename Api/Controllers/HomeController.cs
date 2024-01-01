@@ -68,11 +68,6 @@ namespace Api.Controllers
             return "value";
         }
 
-        // POST api/<HomeController>
-        /// <summary>
-        /// [Authorize]
-        /// </summary>
-        /// <param name="value"></param>
         [HttpPost]
         public void Post([FromBody] string value)
         {
@@ -85,7 +80,7 @@ namespace Api.Controllers
         }
 
         // DELETE api/<HomeController>/5
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
 
         [HttpDelete("{id}")]
         public void Delete(int id)
