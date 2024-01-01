@@ -85,7 +85,7 @@ namespace Api.Controllers
         }
 
         // DELETE api/<HomeController>/5
-        [Authorize(Roles = "User2")]
+        [Authorize(Roles = "Admin")]
 
         [HttpDelete("{id}")]
         public void Delete(int id)
